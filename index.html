@@ -19,6 +19,13 @@
             --button-shadow: 4px 4px 8px #5a54d6, -4px -4px 8px #7e72ff;
         }
 
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;       /* Prevents scrolling */
+            touch-action: none;     /* Prevents default browser gestures */
+        }
+
         body {
             font-family: 'Roboto Mono', monospace;
             display: flex;
@@ -236,14 +243,13 @@
                 score = 0;
                 isGameOver = false;
                 scoreDisplay.textContent = score;
-                walls = []; // Clear walls at the start of a new game
+                walls = [];
                 placeFood();
                 generateWalls();
                 draw();
             }
 
             function placeFood() {
-                // Ensure food does not spawn on the snake or walls
                 do {
                     food = {
                         x: Math.floor(Math.random() * tileCount),
@@ -258,29 +264,25 @@
 
             function generateWalls() {
                 walls = [];
-                const wallCount = 2 + Math.floor(Math.random() * 3); // 2 to 4 walls
+                const wallCount = 2 + Math.floor(Math.random() * 3);
                 for (let i = 0; i < wallCount; i++) {
                     const isHorizontal = Math.random() > 0.5;
-                    const wallLength = 3 + Math.floor(Math.random() * 4); // 3 to 6 segments
+                    const wallLength = 3 + Math.floor(Math.random() * 4);
                     let startX, startY;
 
-                    // Find a starting point that doesn't collide with anything
                     do {
                         startX = Math.floor(Math.random() * tileCount);
                         startY = Math.floor(Math.random() * tileCount);
                     } while (isColliding({ x: startX, y: startY }, snake) || isColliding({ x: startX, y: startY }, [food]) || isColliding({ x: startX, y: startY }, walls));
 
-                    // Generate the wall segments
                     for (let j = 0; j < wallLength; j++) {
                         let newSegment = {
                             x: isHorizontal ? startX + j : startX,
                             y: isHorizontal ? startY : startY + j
                         };
-                        // Add segment only if it's within bounds and not colliding
                         if (newSegment.x >= 0 && newSegment.x < tileCount && newSegment.y >= 0 && newSegment.y < tileCount && !isColliding(newSegment, snake) && !isColliding(newSegment, [food]) && !isColliding(newSegment, walls)) {
                             walls.push(newSegment);
                         } else {
-                            // If a segment would go out of bounds or collide, stop this wall
                             break;
                         }
                     }
@@ -290,63 +292,47 @@
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Draw walls
                 ctx.fillStyle = 'red';
                 walls.forEach(wall => {
                     ctx.fillRect(wall.x * gridSize, wall.y * gridSize, gridSize - 1, gridSize - 1);
                 });
 
-                // Draw snake
                 ctx.fillStyle = '#4CAF50';
                 snake.forEach(segment => {
                     ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
                 });
 
-                // Draw food
                 ctx.fillStyle = 'blue';
                 ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
             }
 
             function updateGame() {
-                if (isGameOver) {
-                    return;
-                }
+                if (isGameOver) return;
 
-                // Move snake
                 const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
                 snake.unshift(head);
 
-                // Check for collision with food
                 if (head.x === food.x && head.y === food.y) {
                     score++;
                     scoreDisplay.textContent = score;
                     placeFood();
-                    // Regenerate walls every 5 points
-                    if (score > 0 && score % 5 === 0) {
-                        generateWalls();
-                    }
+                    if (score > 0 && score % 5 === 0) generateWalls();
                 } else {
                     snake.pop();
                 }
 
-                // Check for collision with walls
                 if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                    gameOver();
-                    return;
+                    gameOver(); return;
                 }
 
-                // Check for collision with self
                 for (let i = 1; i < snake.length; i++) {
                     if (head.x === snake[i].x && head.y === snake[i].y) {
-                        gameOver();
-                        return;
+                        gameOver(); return;
                     }
                 }
 
-                // Check for collision with dynamic walls
                 if (isColliding(head, walls)) {
-                    gameOver();
-                    return;
+                    gameOver(); return;
                 }
 
                 draw();
@@ -387,26 +373,26 @@
             // Touch controls
             let touchStartX, touchStartY;
             canvas.addEventListener('touchstart', e => {
+                e.preventDefault();
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
-            });
+            }, { passive: false });
 
             canvas.addEventListener('touchend', e => {
+                e.preventDefault();
                 const touchEndX = e.changedTouches[0].clientX;
                 const touchEndY = e.changedTouches[0].clientY;
                 const dx = touchEndX - touchStartX;
                 const dy = touchEndY - touchStartY;
 
                 if (Math.abs(dx) > Math.abs(dy)) {
-                    // Horizontal swipe
                     if (dx > 0 && direction.x === 0) direction = { x: 1, y: 0 };
                     if (dx < 0 && direction.x === 0) direction = { x: -1, y: 0 };
                 } else {
-                    // Vertical swipe
                     if (dy > 0 && direction.y === 0) direction = { x: 0, y: 1 };
                     if (dy < 0 && direction.y === 0) direction = { x: 0, y: -1 };
                 }
-            });
+            }, { passive: false });
 
             startButton.addEventListener('click', startGame);
             restartButton.addEventListener('click', restartGame);
