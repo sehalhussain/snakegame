@@ -12,8 +12,8 @@
             --snake-color: #4CAF50;
             --food-color: #4285F4;
             --wall-color: #FF5252;
-            --border-color: #d1d9e6;
-            --box-shadow: 5px 5px 10px #b1c0d4, -5px -5px 10px #ffffff;
+            --border-color: #ece68f;
+            --box-shadow: 5px 5px 10px #81b7ff, -5px -5px 10px #81b7ff;
             --button-color: #6c63ff;
             --button-text-color: #fff;
             --button-shadow: 4px 4px 8px #5a54d6, -4px -4px 8px #7e72ff;
@@ -60,13 +60,13 @@
             font-size: 0.9rem;
             color: #777;
             margin-bottom: 1rem;
-            font-style: italic;
+            font-style: bold;
         }
 
         canvas {
-            background-color: #e0e5ec;
+            background-color: #ebebeb;
             border-radius: 15px;
-            box-shadow: inset 5px 5px 10px #c1c9d4, inset -5px -5px 10px #ffffff;
+            box-shadow: inset 5px 5px 10px #a6cbff, inset -5px -5px 10px #a6cbff;
             transition: all 0.3s ease;
         }
 
@@ -179,7 +179,7 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>SNAKE</h1>
+        <h1>SNAKE GAME</h1>
         <div class="game-description">Avoid red walls and eat blue.</div>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div class="game-info">
@@ -192,7 +192,7 @@
         </div>
     </div>
     
-    <div class="author-credit">Screenshot your highest score and post it on Instagram with #snakechallenge 🐍 <br> Made by Sehal Hussain</div>
+    <div class="author-credit">Made by Sehal Hussain</div>
 
     <div class="game-message" id="messageBox">
         <p id="messageText"></p>
@@ -402,4 +402,5 @@
     </script>
 </body>
 </html>
+
 
