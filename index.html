@@ -40,69 +40,117 @@
     <!-- Favicon (optional, replace with your own icon) -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
         :root {
-            --bg-color: #f0f4f8;
-            --snake-color: #4CAF50;
-            --food-color: #4285F4;
-            --wall-color: #FF5252;
-            --border-color: #ece68f;
-            --box-shadow: 5px 5px 10px #81b7ff, -5px -5px 10px #81b7ff;
-            --button-color: #6c63ff;
-            --button-text-color: #fff;
-            --button-shadow: 4px 4px 8px #5a54d6, -4px -4px 8px #7e72ff;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #ffa36e 0%, #f96f38 100%);
+            --dark-bg: #1a1a2e;
+            --card-bg: rgba(32, 2, 78, 0.349);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow-light: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 20px 40px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.2);
+            --border-radius-lg: 20px;
+            --border-radius-md: 15px;
+            --border-radius-sm: 12px;
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         html, body {
             height: 100%;
             margin: 0;
-            overflow: hidden;       /* Prevents scrolling */
-            touch-action: none;     /* Prevents default browser gestures */
+            overflow: hidden;
+            touch-action: none;
         }
 
         body {
-            font-family: 'Roboto Mono', monospace;
+            font-family: 'Montserrat', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: #333;
+            min-height: 100vh;
+            background: var(--primary-gradient);
+            color: var(--text-primary);
+            padding: 20px;
+            position: relative;
+        }
+
+        .game-wrapper {
+            display: flex;
             flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            max-height: 800px;
         }
 
         .game-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: var(--bg-color);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            flex: 1;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .game-container::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
         }
 
         h1 {
-            font-weight: 700;
-            color: var(--button-color);
+            font-weight: 800;
+            font-size: 3rem;
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 0.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: -1px;
+            text-align: center;
+            line-height: 1;
         }
         
         .game-description {
-            font-size: 0.9rem;
-            color: #777;
-            margin-bottom: 1rem;
-            font-style: bold;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            letter-spacing: 0.5px;
         }
 
         canvas {
-            background-color: #ebebeb;
-            border-radius: 15px;
-            box-shadow: inset 5px 5px 10px #a6cbff, inset -5px -5px 10px #a6cbff;
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-medium);
+            transition: var(--transition-medium);
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
         }
 
         .game-info {
@@ -110,49 +158,137 @@
             justify-content: space-between;
             width: 100%;
             max-width: 400px;
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            font-weight: 700;
+            margin: .5rem 0;
+            gap: 1rem;
         }
 
         .score, .high-score {
-            background-color: #e0e5ec;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
-            box-shadow: inset 2px 2px 5px #c1c9d4, inset -2px -2px 5px #ffffff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            flex: 1;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-fast);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score:hover, .high-score:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .score span, .high-score span {
+            display: block;
+            font-size: 1.3rem;
+            margin-top: 0.25rem;
         }
 
         .controls {
-            margin-top: 2rem;
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             justify-content: center;
+            width: 100%;
+            margin-top: 1rem;
         }
 
         .control-btn {
-            background-color: var(--button-color);
-            color: var(--button-text-color);
+            background: linear-gradient(135deg, #66ea7c 0%, #4ba268 100%);
+            color: white;
             border: none;
             padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
+            border-radius: var(--border-radius-sm);
+            font-size: .8rem;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: var(--button-shadow);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-fast);
+            text-transform: capitalize;
             letter-spacing: 1px;
+            min-width: 160px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            white-space: nowrap;
+            margin-bottom: 50px;
+        }
+
+        .control-btn_2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-fast);
+            text-transform: capitalize;
+            letter-spacing: 1px;
+            min-width: 160px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .control-btn:hover {
-            box-shadow: 2px 2px 5px #5a54d6, -2px -2px 5px #7e72ff, inset 1px 1px 2px #4a45b3;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
         }
 
         .control-btn:active {
-            box-shadow: inset 2px 2px 5px #4a45b3, inset -2px -2px 5px #6e65d8;
-            transform: translateY(0);
+            transform: translateY(-1px);
+        }
+
+        /* Different color for How to Play button */
+        #howToPlayButton {
+            background: var(--accent-gradient);
+            
+        }
+
+        #howToPlayButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(56, 249, 215, 0.3);
+        }
+
+        .button-container {
+            position: relative;
+            width: 160px;
+            height: 56px;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #startButton {
+            display: block;
+        }
+
+        #restartButton {
+            display: none;
         }
 
         .game-message {
@@ -160,79 +296,280 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: var(--box-shadow);
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
             text-align: center;
             font-size: 1.5rem;
             font-weight: 700;
             display: none;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 300px;
         }
 
         .game-message p {
-            margin: 0;
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-weight: 600;
+            align-items: center;
         }
 
         .game-message button {
+            margin: 0;
+            align-items: center;
+            margin: auto
+        }
+
+        /* How to Play Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 101;
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-medium);
+            text-align: center;
+            max-width: 90%;
+            width: 500px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-content h2 {
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .modal-content p {
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-content ul li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 30px;
+            font-weight: 500;
+        }
+
+        .modal-content ul li::before {
+            content: '🎯';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .modal-close-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-top: 1rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .modal-close-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(56, 249, 215, 0.3);
+        }
+
+        .modal-close-btn:active {
+            transform: translateY(-1px);
         }
 
         .author-credit {
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: #777;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-weight: 500;
+            margin-top: auto;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-wrapper {
+                max-height: none;
+                height: 100vh;
+            }
+
             .game-container {
-                padding: 1rem;
+                padding: 1.5rem;
+                margin-bottom: 5px;
             }
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 2.2rem;
             }
 
             canvas {
-                width: 280px;
-                height: 280px;
+                width: 300px;
+                height: 300px;
             }
 
             .game-info {
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.75rem;
                 align-items: center;
             }
 
-            .control-btn {
+            .score, .high-score {
+                width: 100%;
+                padding: 0.6rem 1.2rem;
+                font-size: 1rem;
+            }
+
+            .score span, .high-score span {
+                font-size: 1.1rem;
+            }
+
+            .control-btn, .button-container {
                 padding: 0.8rem 1.5rem;
                 font-size: 0.9rem;
+                min-width: 140px;
+                height: 48px;
             }
+
+            .control-btn_2 {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+                min-width: 130px;
+                width: 100px;
+                height: 35px;
+            }
+
+            .controls {
+                gap: 0.75rem;
+            }
+
+            .modal-content {
+                padding: 1.8rem;
+                width: 95%;
+            }
+
+            .modal-content h2 {
+                font-size: 1.6rem;
+            }
+
+            .modal-content p, .modal-content ul li {
+                font-size: 0.95rem;
+            }
+
+            .game-message {
+                padding: 2rem;
+                font-size: 1.2rem;
+                min-width: 280px;
+            }
+            
+            .author-credit {
+                font-size: 0.75rem;
+                padding: 5px 0;
+            }
+        }
+
+        /* Remove the bouncing animation */
+        canvas {
+            animation: none;
         }
     </style>
 </head>
 <body>
+<div class="game-wrapper">
     <div class="game-container">
         <h1>SNAKE GAME</h1>
-        <div class="game-description">Avoid red walls and eat blue.</div>
+        <button class="control-btn_2" id="howToPlayButton">How to Play</button>
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         <div class="game-info">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="high-score">High Score: <span id="highScore">0</span></div>
         </div>
         <div class="controls">
-            <button class="control-btn" id="startButton">Start Game</button>
-            <button class="control-btn" id="restartButton" style="display:none;">Restart Game</button>
+            <div class="button-container">
+                <button class="control-btn toggle-btn" id="startButton">Start Game</button>
+                <button class="control-btn toggle-btn" id="restartButton">Restart Game</button>
+            </div>
         </div>
     </div>
     
-    <div class="author-credit">Made by Sehal Hussain</div>
+    <div class="author-credit">© 2025 Sehal Hussain. All rights reserved.</div>
+</div>
 
     <div class="game-message" id="messageBox">
         <p id="messageText"></p>
         <button class="control-btn" id="messageButton">OK</button>
     </div>
+
+    <div class="modal-overlay" id="howToPlayModal">
+        <div class="modal-content">
+            <h2>How to Play Snake</h2>
+            <ul>
+                <li><strong>Objective:</strong> Eat the blue food to grow your snake and increase your score.</li>
+                <li><strong>Avoid:</strong> Don't hit the red walls or your own snake's body!</li>
+                <li><strong>Controls:</strong>
+                    <ul>
+                        <li><span style="font-weight: bold;">Desktop:</span> Use the <kbd>Arrow Keys</kbd> (Up, Down, Left, Right)</li>
+                        <li><span style="font-weight: bold;">Mobile:</span> Tap 'Start Game' then swipe anywhere on the screen in the direction you want the snake to move.</li>
+                    </ul>
+                </li>
+                <li>Walls appear as your score increases, adding to the challenge!</li>
+            </ul>
+            <button class="modal-close-btn" id="closeHowToPlayButton">Got It!</button>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -245,6 +582,9 @@
             const messageBox = document.getElementById('messageBox');
             const messageText = document.getElementById('messageText');
             const messageButton = document.getElementById('messageButton');
+            const howToPlayButton = document.getElementById('howToPlayButton');
+            const howToPlayModal = document.getElementById('howToPlayModal');
+            const closeHowToPlayButton = document.getElementById('closeHowToPlayButton');
             
             let gameLoopInterval;
             let snake, food, direction, score, isGameOver;
@@ -327,18 +667,62 @@
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                ctx.fillStyle = 'red';
+                // Draw walls
+                ctx.fillStyle = '#FF6B6B';
                 walls.forEach(wall => {
                     ctx.fillRect(wall.x * gridSize, wall.y * gridSize, gridSize - 1, gridSize - 1);
+                    // Add inner highlight for 3D effect
+                    ctx.fillStyle = '#FF8E8E';
+                    ctx.fillRect(wall.x * gridSize + 2, wall.y * gridSize + 2, gridSize - 5, gridSize - 5);
+                    ctx.fillStyle = '#FF6B6B';
                 });
 
-                ctx.fillStyle = '#4CAF50';
-                snake.forEach(segment => {
-                    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+                // Draw snake with gradient effect
+                snake.forEach((segment, index) => {
+                    if (index === 0) {
+                        // Head
+                        ctx.fillStyle = '#4CAF50';
+                        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+                        // Eyes
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(segment.x * gridSize + 4, segment.y * gridSize + 4, 3, 3);
+                        ctx.fillRect(segment.x * gridSize + 12, segment.y * gridSize + 4, 3, 3);
+                    } else {
+                        // Body
+                        const gradient = ctx.createLinearGradient(
+                            segment.x * gridSize, segment.y * gridSize,
+                            segment.x * gridSize + gridSize, segment.y * gridSize + gridSize
+                        );
+                        gradient.addColorStop(0, '#4CAF50');
+                        gradient.addColorStop(1, '#45a049');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+                    }
                 });
 
-                ctx.fillStyle = 'blue';
-                ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+                // Draw food with glow effect
+                ctx.fillStyle = '#2196F3';
+                ctx.beginPath();
+                ctx.arc(
+                    food.x * gridSize + gridSize/2,
+                    food.y * gridSize + gridSize/2,
+                    gridSize/2 - 1,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                // Inner highlight
+                ctx.fillStyle = '#64B5F6';
+                ctx.beginPath();
+                ctx.arc(
+                    food.x * gridSize + gridSize/2 - 2,
+                    food.y * gridSize + gridSize/2 - 2,
+                    gridSize/4,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
             }
 
             function updateGame() {
@@ -382,13 +766,21 @@
                     highScoreDisplay.textContent = highScore;
                 }
                 showMessage(`Game Over! Your score: ${score}`, true);
-                restartButton.style.display = 'block';
-                startButton.style.display = 'none';
+                toggleButtons();
+            }
+
+            function toggleButtons() {
+                if (startButton.style.display === 'none') {
+                    startButton.style.display = 'block';
+                    restartButton.style.display = 'none';
+                } else {
+                    startButton.style.display = 'none';
+                    restartButton.style.display = 'block';
+                }
             }
 
             function startGame() {
-                startButton.style.display = 'none';
-                restartButton.style.display = 'block';
+                toggleButtons();
                 initGame();
                 gameLoopInterval = setInterval(updateGame, 100);
             }
@@ -431,6 +823,15 @@
 
             startButton.addEventListener('click', startGame);
             restartButton.addEventListener('click', restartGame);
+
+            // Event listeners for the How to Play modal
+            howToPlayButton.addEventListener('click', () => {
+                howToPlayModal.style.display = 'flex';
+            });
+
+            closeHowToPlayButton.addEventListener('click', () => {
+                howToPlayModal.style.display = 'none';
+            });
 
             initGame();
         });
