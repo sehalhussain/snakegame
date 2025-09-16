@@ -42,14 +42,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 
-        :root {
+         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --accent-gradient: linear-gradient(135deg, #ffa36e 0%, #f96f38 100%);
             --dark-bg: #1a1a2e;
             --card-bg: rgba(32, 2, 78, 0.349);
             --text-primary: #2d3748;
-            --text-secondary: #4a5568;
+            --text-secondary: #f7f7f7;
             --shadow-light: 0 10px 25px rgba(0, 0, 0, 0.1);
             --shadow-medium: 0 20px 40px rgba(0, 0, 0, 0.15);
             --shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.2);
@@ -330,7 +330,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(29, 29, 29, 0.795);
             backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
@@ -560,8 +560,8 @@
                 <li><strong>Avoid:</strong> Don't hit the red walls or your own snake's body!</li>
                 <li><strong>Controls:</strong>
                     <ul>
-                        <li><span style="font-weight: bold;">Desktop:</span> Use the <kbd>Arrow Keys</kbd> (Up, Down, Left, Right)</li>
-                        <li><span style="font-weight: bold;">Mobile:</span> Tap 'Start Game' then swipe anywhere on the screen in the direction you want the snake to move.</li>
+                        <br><li><span style="font-weight: bold;">Desktop:</span> Use the Arrow Keys (Up, Down, Left, Right)</li>
+                        <li><span style="font-weight: bold;">Mobile:</span> Tap 'Start Game' then swipe anywhere on the canvas in the direction you want the snake to move.</li>
                     </ul>
                 </li>
                 <li>Walls appear as your score increases, adding to the challenge!</li>
@@ -585,8 +585,9 @@
             const howToPlayButton = document.getElementById('howToPlayButton');
             const howToPlayModal = document.getElementById('howToPlayModal');
             const closeHowToPlayButton = document.getElementById('closeHowToPlayButton');
+            const initialSpeed = 300;  // slow start
             
-            let gameLoopInterval;
+            let speed = initialSpeed;
             let snake, food, direction, score, isGameOver;
             let walls = [];
             let gridSize = 20;
@@ -732,11 +733,18 @@
                 snake.unshift(head);
 
                 if (head.x === food.x && head.y === food.y) {
-                    score++;
-                    scoreDisplay.textContent = score;
-                    placeFood();
-                    if (score > 0 && score % 5 === 0) generateWalls();
-                } else {
+                 score++;
+                scoreDisplay.textContent = score;
+                placeFood();
+
+                if (speed > 50) { // don't let it get too fast
+                    speed -= 10;
+                }
+
+
+                if (score > 0 && score % 5 === 0) generateWalls();
+            }
+                else {
                     snake.pop();
                 }
 
@@ -759,7 +767,6 @@
 
             function gameOver() {
                 isGameOver = true;
-                clearInterval(gameLoopInterval);
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('highScore', highScore);
@@ -782,11 +789,13 @@
             function startGame() {
                 toggleButtons();
                 initGame();
-                gameLoopInterval = setInterval(updateGame, 100);
+                speed = initialSpeed;  // reset starting speed
+                gameLoop();            // kick off the loop
             }
 
+
             function restartGame() {
-                clearInterval(gameLoopInterval);
+                speed = initialSpeed; // reset to starting speed
                 startGame();
             }
 
@@ -796,6 +805,12 @@
                 if (e.key === 'ArrowLeft' && direction.x === 0) direction = { x: -1, y: 0 };
                 if (e.key === 'ArrowRight' && direction.x === 0) direction = { x: 1, y: 0 };
             });
+
+            function gameLoop() {
+                if (isGameOver) return;   // stop if game ended
+                updateGame();             // move snake, check collisions, draw
+                setTimeout(gameLoop, speed);  // schedule next step using current speed
+            }
 
             // Touch controls
             let touchStartX, touchStartY;
